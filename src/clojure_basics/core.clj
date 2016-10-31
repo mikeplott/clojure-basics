@@ -1,6 +1,24 @@
 (ns clojure-basics.core
+  (:require [clojure.string :as str])
   (:gen-class))
 
-(defn -main [& args]
-  (println "Hello, world!"))
+(def file-name "people.csv")
 
+(defn -main [& args]
+  (let [people (str/split-lines (slurp file-name))
+        people (map (fn [line]
+                      (str/split line #","))
+                 people)
+        header (first people)
+        people (rest people)
+        people (map (fn [line]
+                      (zipmap header line))
+                 people)
+        people (filter (fn [line]
+                         (= (get line "country")
+                            "Brazil"))
+                 people)
+        people (pr-str people)]
+    (spit "people.edn" people)))
+       
+  
